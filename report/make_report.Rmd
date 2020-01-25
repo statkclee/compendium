@@ -13,6 +13,7 @@ output:
     code_folding: show
     number_section: true
     self_contained: true
+mainfont: NanumGothic
 editor_options: 
   chunk_output_type: console
 ---

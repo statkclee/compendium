@@ -1,15 +1,22 @@
+DATA = data
+REPORT = report
+TEMP = processed
+
 all: report/make_report.html
 
-data/tw_dat.rds:
-	Rscript R/get_data.R tidyverse 100
+$(DATA)/tw_dat.rds:
+	Rscript R/get_data.R "#불평등" 100
 
-processed/twit_trend.png: data/tw_dat.rds
-	Rscript R/graph_trend.R
+$(TEMP)/twit_trend.png: $(DATA)/tw_dat.rds
+	Rscript R/graph_trend.R "#불평등"
 
-report/make_report.html:
+$(REPORT)/make_report.html: $(DATA)/tw_dat.rds $(TEMP)/twit_trend.png
 	Rscript R/make_report.R
 
 clean:
-	rm -rf data/tw_dat.rds processed/twit_trend.png report/make_report.html
+	rm -rf $(DATA)/tw_dat.rds 
+	rm -rf $(TEMP)/twit_trend.png 
+	rm -rf $(REPORT)/make_report.html $(REPORT)/make_report.pdf $(REPORT)/make_report.docx
+	
 
 	

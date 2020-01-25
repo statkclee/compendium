@@ -1,7 +1,11 @@
 # 0. 환경설정 -----
 library(rtweet)  # install.packages("rtweet")
 library(tidyverse)
-library(glue)
+
+# dir.create("processed")
+
+args <- commandArgs(trailing=TRUE)
+topic <- args[1]
 
 graph_trend <- function(topic) {
   
@@ -18,4 +22,4 @@ graph_trend <- function(topic) {
   ggsave("processed/twit_trend.png")
 }
 
-# graph_trend("불평등")
+graph_trend(topic)
