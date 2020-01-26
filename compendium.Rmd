@@ -120,6 +120,7 @@ rscript R/graph_trend.R '#불평등'
 본격적으로 `Makefile`을 제작하여 본다. `make clean`과 `make all`을 만들어 코드를 깔끔하게 정리한다.
 
 ```{r Makefile, eval=FALSE}
+# Makefile
 DATA = data
 REPORT = report
 TEMP = processed
@@ -139,6 +140,7 @@ clean:
 	rm -rf $(DATA)/tw_dat.rds 
 	rm -rf $(TEMP)/twit_trend.png 
 	rm -rf $(REPORT)/make_report.html $(REPORT)/make_report.pdf $(REPORT)/make_report.docx
+	rm -rf $(REPORT)/*.tex $(REPORT)/*.log 
 ```
 
 `report.R` 파일에는 한글을 처리하기 위해서 한글 폰트와 더불어 `latex_engine`을 `xelatex`로 지정한다.
@@ -158,7 +160,7 @@ rmarkdown::render("report/make_report.Rmd",
 
 rmarkdown::render("report/make_report.Rmd", 
                   output_format = pdf_document(toc=TRUE, latex_engine = 'xelatex',
-                                 pandoc_args = c("--variable", "mainfont='NanumGothic'")),
+                                 pandoc_args = c("--variable", "mainfont=NanumGothic")),
                   output_file = "make_report.pdf",
                   encoding = 'UTF-8', 
                   output_dir = "report")
@@ -170,4 +172,15 @@ rmarkdown::render("report/make_report.Rmd",
                   output_dir = "report")
 ```
 
+상기 파일을 `make all` 명령어로 실행시키게 될 경우 자동으로 `report\` 디렉토리에 `make_report.pdf`, `make_report.docx`, `make_report.html` 파일이 생성되게 된다.
 
+```{bash Makefile-run}
+make clean
+make all
+```
+
+작업 결과를 다음 `ls` 명령어로 실행할 수 있다.
+
+```{bash Makefile-run-check}
+ls -al report/
+```
