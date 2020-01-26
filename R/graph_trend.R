@@ -1,6 +1,8 @@
 # 0. 환경설정 -----
 library(rtweet)  # install.packages("rtweet")
 library(tidyverse)
+library(extrafont)
+loadfonts()
 
 # dir.create("processed")
 
@@ -15,8 +17,8 @@ graph_trend <- function(topic) {
     ggplot(aes(x=time, y=n)) +
     geom_line() +
     geom_point() +
-    labs(x="", y="트윗횟수", title=paste0("시간별 #", topic, " 트윗 추세")) +
-    theme_bw() +
+    labs(x="", y="트윗횟수", title=paste0("시간별 ", topic, " 트윗 추세")) +
+    theme_bw(base_family = "NanumGothic") +
     theme(legend.position = "top")
   
   ggsave("processed/twit_trend.png")

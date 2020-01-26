@@ -5,10 +5,10 @@ TEMP = processed
 all: report/make_report.html
 
 $(DATA)/tw_dat.rds:
-	Rscript R/get_data.R "#불평등" 100
+	Rscript R/get_data.R $(TOPIC) $(NUM_TWIT)
 
 $(TEMP)/twit_trend.png: $(DATA)/tw_dat.rds
-	Rscript R/graph_trend.R "#불평등"
+	Rscript R/graph_trend.R $(TOPIC)
 
 $(REPORT)/make_report.html: $(DATA)/tw_dat.rds $(TEMP)/twit_trend.png
 	Rscript R/make_report.R
