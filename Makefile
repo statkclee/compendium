@@ -17,6 +17,7 @@ clean:
 	rm -rf $(DATA)/tw_dat.rds 
 	rm -rf $(TEMP)/twit_trend.png 
 	rm -rf $(REPORT)/make_report.html $(REPORT)/make_report.pdf $(REPORT)/make_report.docx
+	rm -rf $(REPORT)/*.tex $(REPORT)/*.log 
 	
 
 	
