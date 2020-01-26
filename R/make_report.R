@@ -4,6 +4,7 @@ library(rmarkdown)
 rmarkdown::render("report/make_report.Rmd",
                   output_format="html_document",
                   output_file = "make_report.html",
+                  clean = TRUE,
                   encoding = 'UTF-8',
                   output_dir = "report")
 

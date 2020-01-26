@@ -167,23 +167,26 @@ PDF 보고서 파일 생성을 위해서 `pdf_document()` 함수에 `latex_engin
 library(tidyverse)
 library(rmarkdown)
 
-rmarkdown::render("report/make_report.Rmd", 
+rmarkdown::render("report/make_report.Rmd",
                   output_format="html_document",
                   output_file = "make_report.html",
-                  encoding = 'UTF-8', 
+                  clean = TRUE,
+                  encoding = 'UTF-8',
                   output_dir = "report")
 
-rmarkdown::render("report/make_report.Rmd", 
+rmarkdown::render("report/make_report.Rmd",
                   output_format = pdf_document(toc=TRUE, latex_engine = 'xelatex',
                                  pandoc_args = c("--variable", "mainfont=NanumGothic")),
+                  clean = TRUE,
                   output_file = "make_report.pdf",
-                  encoding = 'UTF-8', 
+                  encoding = 'UTF-8',
                   output_dir = "report")
 
-rmarkdown::render("report/make_report.Rmd", 
-                  output_format="word_document",
+rmarkdown::render("report/make_report.Rmd",
+                  output_format = word_document(reference_docx = "../assets/word_template.docx"),
+                  clean = TRUE,
                   output_file = "make_report.docx",
-                  encoding = 'UTF-8', 
+                  encoding = 'UTF-8',
                   output_dir = "report")
 ```
 
@@ -219,26 +222,47 @@ TEMP = processed
 
 all: report/make_report.html
 
+## Get Twitter Data
 $(DATA)/tw_dat.rds:
 	Rscript R/get_data.R $(TOPIC) $(NUM_TWIT)
 
+## Visualize Twitter Data
 $(TEMP)/twit_trend.png: $(DATA)/tw_dat.rds
 	Rscript R/graph_trend.R $(TOPIC)
 
-$(REPORT)/make_report.html: $(DATA)/tw_dat.rds $(TEMP)/twit_trend.png
+$(TEMP)/user_activity.png: $(DATA)/tw_dat.rds
+	Rscript R/analyze_activity.R
+
+$(TEMP)/retweet_network.png: $(DATA)/tw_dat.rds
+	Rscript R/visualize_retweets.R
+
+$(TEMP)/bow_nlp.png: $(DATA)/tw_dat.rds
+	Rscript R/visualize_nlp.R
+
+## Make Reports	
+$(REPORT)/make_report.html: $(DATA)/tw_dat.rds $(TEMP)/twit_trend.png $(TEMP)/user_activity.png $(TEMP)/retweet_network.png $(TEMP)/bow_nlp.png
 	Rscript R/make_report.R
 
 clean:
 	rm -rf $(DATA)/tw_dat.rds 
-	rm -rf $(TEMP)/twit_trend.png 
+	rm -rf $(TEMP)/twit_trend.png $(TEMP)/user_activity.png $(TEMP)/retweet_network.png $(TEMP)/bow_nlp.png
 	rm -rf $(REPORT)/make_report.html $(REPORT)/make_report.pdf $(REPORT)/make_report.docx
 	rm -rf $(REPORT)/*.tex $(REPORT)/*.log 
 ```
 
-상기와 같이 파라미터 `Makefile`을 정의한 후 `make` 명령어에 `변수=해쉬태그` 형태로 넘긴다. 단, `#`을 Esccape 해야 되서 앞에 역슬래쉬와 '\#불평등'와 같은 형태로 변수값을 조정한다.
+상기와 같이 파라미터 `Makefile`을 정의한 후 `make` 명령어에 `변수=해쉬태그` 형태로 넘긴다. 단, `#`을 Esccape 해야 되서 앞에 역슬래쉬와 '\#AI'와 같은 형태로 변수값을 조정한다.
 
 ```{bash run-hashtag-Makefile}
 make clean
-make all TOPIC='\#불평등'  NUM_TWIT=100
+make all TOPIC='\#AI'  NUM_TWIT=1000
+```
+
+
+# 트위터 분석 추가  {#parametrized-Makefile-twitter}
+
+트위터 데이터를 가져와서 다양한 함수를 추가함으로써 텍스트, 네트워크, 시각화, 공간통계 등 분석을 추가할 수 있다. 분석된 스크립트는 `R/` 디렉토리에 넣고, 함수 실행결과는 `processed/` 디렉토리 내부에 그래프 이미지를 비롯한 각종 모형, 중간 데이터 파일 등을 저장시켜 둔다. 향후 추가 분석이 이뤄지는 경우 동일한 방식으로 `R/` 디렉토리에 함수를 추가시키고 `processed/` 디렉토리에 중간 산출물을 저장시킨다. 마지막으로  `.Rmd` 보고서 Literate Programming을 완성시킨다. 데이터 분석 결과물을 체계적으로 정리하고 나서 의사결정 및 데이터 분석을 통한 근거 내용을 차분하게 정리한다.
+
+```{bash compendium-tree}
+tree
 ```
 
